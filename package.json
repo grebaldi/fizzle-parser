@@ -1,0 +1,39 @@
+{
+  "name": "fizzle-parser",
+  "description": "A parse for FlowQuery Fizzle expressions",
+  "main": "dist/index.js",
+  "scripts": {
+    "prepublish": "npm run build",
+    "pretest": "rollup -c rollup.config.test.js",
+    "build": "rollup -c rollup.config.build.js",
+    "test": "mocha test/bundle.js",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+  },
+  "keywords": [],
+  "author": "Wilhelm Behncke <wilhelm.behncke@googlemail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@inkdpixels/commit-analyzer": "^1.0.0",
+    "@inkdpixels/release-notes-generator": "^1.0.0",
+    "babel-eslint": "^5.0.0-beta6",
+    "babel-preset-es2015-rollup": "^1.1.1",
+    "chai": "^3.5.0",
+    "eslint": "^1.10.3",
+    "mocha": "^2.3.4",
+    "mocha-sinon": "^1.1.5",
+    "rollup": "^0.24.1",
+    "rollup-plugin-babel": "^2.3.9",
+    "rollup-plugin-multi-entry": "^1.1.0",
+    "semantic-release": "^4.3.5",
+    "sinon": "^1.17.3",
+    "source-map-support": "^0.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/grebaldi/fizzle-parser.git"
+  },
+  "release": {
+    "analyzeCommits": "@inkdpixels/commit-analyzer",
+    "generateNotes": "@inkdpixels/release-notes-generator"
+  }
+}
