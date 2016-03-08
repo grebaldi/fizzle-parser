@@ -22,7 +22,7 @@ export const defaultHandleTypeOperand = (operand, value) => {
 };
 
 const factory = handleTypeOperand => {
-		const matchesFilterGroup = filters => subject => subject.filter(item => filters.every(matchesFilter(item)));
+		const matchesFilterGroup = filters => item => filters.every(matchesFilter(item));
 		const matchesFilter = item => filter => {
 				if (filter.identifierFilter && !matchesIdentifierFilter(item, filter.identifierFilter)) {
 						return false;
@@ -32,7 +32,7 @@ const factory = handleTypeOperand => {
 						return false;
 				}
 
-				return attributeFilters.every(matchesAttributeFilter(item));
+				return filter.attributeFilters.every(matchesAttributeFilter(item));
 		};
 		const matchesAttributeFilter = item => filter => {
 				let value;
@@ -43,7 +43,7 @@ const factory = handleTypeOperand => {
 						value = item;
 				}
 
-
+				return evaluateOperation(value, filter.operator, filter.operand);
 		};
 		const matchesPropertyNameFilter = () => {throw new Error('Property Name filter not supported for generic objects.')};
 		const matchesIdentifierFilter = () => {throw new Error('Identifier filter not supported in client-side fizzle.')};
@@ -79,7 +79,7 @@ const factory = handleTypeOperand => {
 						case '*=':
 								return value.indexOf(operand) !== -1;
 						case 'instanceof':
-								handleTypeOperand(operand, value);
+								return handleTypeOperand(operand, value);
 						default:
 								return (value !== null && value !== undefined);
 				}
