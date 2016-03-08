@@ -6,7 +6,7 @@ import {
 		filter
 } from './index.js';
 
-describe.only('Filter API', () => {
+describe('Filter API', () => {
 		describe('Public', () => {
 				it('should expose the parser', () => {
 						expect(parser).not.to.be.an('undefined');
