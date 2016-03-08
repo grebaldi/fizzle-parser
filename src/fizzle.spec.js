@@ -125,4 +125,37 @@ describe('Fizzle Parser', () => {
 						]);
 				});
 		});
+
+		describe('AttributeFilter', () => {
+				it('should match valid attribute filters', () => {
+						expect(parser.parse('[foo]')).to.be.an('array');
+						expect(parser.parse('[	foo   ]')).to.be.an('array');
+						expect(parser.parse('[foo="Bar"]')).to.be.an('array');
+						expect(parser.parse('[foo=\'Bar\']')).to.be.an('array');
+						expect(parser.parse('[foo^="Bar"]')).to.be.an('array');
+						expect(parser.parse('[foo$="Bar"]')).to.be.an('array');
+						expect(parser.parse('[foo*="Bar"]')).to.be.an('array');
+						expect(parser.parse('[_hideInIndex!=0]')).to.be.an('array');
+						expect(parser.parse('[foo<0]')).to.be.an('array');
+						expect(parser.parse('[foo<=0]')).to.be.an('array');
+						expect(parser.parse('[foo>0]')).to.be.an('array');
+						expect(parser.parse('[foo>=0]')).to.be.an('array');
+						expect(parser.parse('[foo   =   "Bar"   ]')).to.be.an('array');
+						expect(parser.parse('[foo   =   Bar   ]')).to.be.an('array');
+						expect(parser.parse('[foo   =   B\\ar   ]')).to.be.an('array');
+						expect(parser.parse('[foo   =   B:ar   ]')).to.be.an('array');
+				});
+
+				it('should not match invalid attribute filters', () => {
+						expect(() => parser.parse('[foo   =   B\[   ]')).to.throw(parser.SyntaxError);
+						expect(() => parser.parse('[foo   =   Fo"   ]')).to.throw(parser.SyntaxError);
+						expect(() => parser.parse('[foo   =   Foo ba   ]')).to.throw(parser.SyntaxError);
+				});
+
+				it('should match instanceof statements', () => {
+						expect(parser.parse('[instanceof "asdf"]')).to.be.an('array');
+						expect(parser.parse('[instanceof asdf]')).to.be.an('array');
+						expect(parser.parse('[foo instanceof string]')).to.be.an('array');
+				});
+		});
 });

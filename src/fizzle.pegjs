@@ -39,7 +39,7 @@ ObjectIdentifier
   = [0-9a-zA-Z_-]+
 
 UnquotedOperand
- 	= operand:([^"'\[\]])+ { return operand.join('').trim() }
+ 	= operand:([^ "'\[\]])+ { return operand.join('').trim() }
 
 PrefixMatch
 	= '^='
