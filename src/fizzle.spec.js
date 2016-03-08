@@ -158,4 +158,31 @@ describe('Fizzle Parser', () => {
 						expect(parser.parse('[foo instanceof string]')).to.be.an('array');
 				});
 		});
+
+		describe('Operands', () => {
+				it('should convert boolean operands to boolean values', () => {
+						const trueAst = parser.parse('[foo=true]');
+						const falseAst = parser.parse('[foo=false]');
+
+						expect(trueAst[0].attribute[0].right.operand).to.be.a('boolean');
+						expect(trueAst[0].attribute[0].right.operand).to.equal(true);
+
+						expect(falseAst[0].attribute[0].right.operand).to.be.a('boolean');
+						expect(falseAst[0].attribute[0].right.operand).to.equal(false);
+				});
+
+				it('should convert integer operands to number values', () => {
+						const ast = parser.parse('[foo=123]');
+
+						expect(ast[0].attribute[0].right.operand).to.be.a('number');
+						expect(ast[0].attribute[0].right.operand).to.equal(123);
+				});
+
+				it('should convert float operands to number values', () => {
+						const ast = parser.parse('[foo=42.23]');
+
+						expect(ast[0].attribute[0].right.operand).to.be.a('number');
+						expect(ast[0].attribute[0].right.operand).to.equal(42.23);
+				});
+		});
 });

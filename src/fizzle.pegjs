@@ -83,7 +83,7 @@ NotSingleQuote
   = !"'" char: ([\x20-\x21\x23-\x5B\x5D-\u10FFFF	] / "\\'") {return char}
 
 BooleanLiteral
-	= 'true' / 'TRUE' / 'false' / 'FALSE'
+	= value:('true' / 'TRUE' / 'false' / 'FALSE') { return (value === 'true' || value === 'TRUE') ? true : false }
 
 Identifier
 	= first:[a-zA-Z_] following:[a-zA-Z0-9_\-]* { return first + following.join('') }
