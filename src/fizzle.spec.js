@@ -8,17 +8,16 @@ describe('Fizzle Parser', () => {
 						const ast = parser.parse(filterGroup);
 
 						expect(ast).not.to.equal(null);
-						expect(ast).to.deep.equal([{
-								address: {
-									property: 'foo'
-								},
-								attribute: [
-										{
-												left: 'bar',
-												right: null
-										}
-								]
-						}]);
+						expect(ast).to.deep.equal({
+								filters: [{
+										propertyNameFilter: 'foo',
+										attributeFilters: [
+												{
+														identifier: 'bar'
+												}
+										]
+								}]
+						});
 				});
 
 				it('should match multiple or-connected filters', () => {
@@ -26,22 +25,19 @@ describe('Fizzle Parser', () => {
 						const ast = parser.parse(filterGroup);
 
 						expect(ast).not.to.equal(null);
-						expect(ast).to.deep.equal([{
-								address: {
-									property: 'foo'
-								},
-								attribute: [
-										{
-												left: 'baz',
-												right: null
-										}
-								]
-						},{
-								address: {
-										property: 'asdf'
-								},
-								attribute: []
-						}]);
+						expect(ast).to.deep.equal({
+								filters: [{
+										propertyNameFilter: 'foo',
+										attributeFilters: [
+												{
+														identifier: 'baz'
+												}
+										]
+								},{
+										propertyNameFilter: 'asdf',
+										attributeFilters: []
+								}]
+						});
 				});
 
 				it('should not match multiple and-connected filters', () => {
@@ -53,12 +49,12 @@ describe('Fizzle Parser', () => {
 
 		describe('Filter', () => {
 				it('should match valid filters', () => {
-						expect(parser.parse('foo')).to.be.an('array');
-						expect(parser.parse('foo-bar')).to.be.an('array');
-						expect(parser.parse('foo[baz]')).to.be.an('array');
-						expect(parser.parse('foo[baz][bar]')).to.be.an('array');
-						expect(parser.parse('foo[baz]')).to.be.an('array');
-						expect(parser.parse('[baz][foo="asdf"]')).to.be.an('array');
+						expect(parser.parse('foo')).to.be.an('object');
+						expect(parser.parse('foo-bar')).to.be.an('object');
+						expect(parser.parse('foo[baz]')).to.be.an('object');
+						expect(parser.parse('foo[baz][bar]')).to.be.an('object');
+						expect(parser.parse('foo[baz]')).to.be.an('object');
+						expect(parser.parse('[baz][foo="asdf"]')).to.be.an('object');
 				});
 
 				it('should not match universal selector', () => {
@@ -69,22 +65,21 @@ describe('Fizzle Parser', () => {
 						const filter = 'foo[baz][foo  =  asdf]';
 						const ast = parser.parse(filter);
 
-						expect(ast).to.deep.equal([{
-								address: { property: 'foo' },
-								attribute: [
-										{
-												left: 'baz',
-												right: null
-										},
-										{
-												left: 'foo',
-												right: {
+						expect(ast).to.deep.equal({
+								filters: [{
+										propertyNameFilter: 'foo',
+										attributeFilters: [
+												{
+														identifier: 'baz'
+												},
+												{
+														identifier: 'foo',
 														operator: '=',
 														operand: 'asdf'
 												}
-										}
-								]
-						}]);
+										]
+								}]
+						});
 				});
 		});
 
@@ -100,10 +95,10 @@ describe('Fizzle Parser', () => {
 
 		describe('Paths', () => {
 				it('should match valid paths', () => {
-						expect(parser.parse('/sites/foo')).to.be.an('array');
-						expect(parser.parse('foo/bar')).to.be.an('array');
-						expect(parser.parse('foo/node_1234-5678')).to.be.an('array');
-						expect(parser.parse('/')).to.be.an('array');
+						expect(parser.parse('/sites/foo')).to.be.an('object');
+						expect(parser.parse('foo/bar')).to.be.an('object');
+						expect(parser.parse('foo/node_1234-5678')).to.be.an('object');
+						expect(parser.parse('/')).to.be.an('object');
 				});
 
 				it('should not match invalid paths', () => {
@@ -117,33 +112,35 @@ describe('Fizzle Parser', () => {
 				it('should return a correct ast', () => {
 						const ast = parser.parse('foo/bar/baz/blah');
 
-						expect(ast).to.deep.equal([
-								{
-										address: {  path: 'foo/bar/baz/blah' },
-										attribute: []
-								}
-						]);
+						expect(ast).to.deep.equal({
+								filters: [
+										{
+												pathFilter: 'foo/bar/baz/blah',
+												attributeFilters: []
+										}
+								]
+						});
 				});
 		});
 
 		describe('AttributeFilter', () => {
 				it('should match valid attribute filters', () => {
-						expect(parser.parse('[foo]')).to.be.an('array');
-						expect(parser.parse('[	foo   ]')).to.be.an('array');
-						expect(parser.parse('[foo="Bar"]')).to.be.an('array');
-						expect(parser.parse('[foo=\'Bar\']')).to.be.an('array');
-						expect(parser.parse('[foo^="Bar"]')).to.be.an('array');
-						expect(parser.parse('[foo$="Bar"]')).to.be.an('array');
-						expect(parser.parse('[foo*="Bar"]')).to.be.an('array');
-						expect(parser.parse('[_hideInIndex!=0]')).to.be.an('array');
-						expect(parser.parse('[foo<0]')).to.be.an('array');
-						expect(parser.parse('[foo<=0]')).to.be.an('array');
-						expect(parser.parse('[foo>0]')).to.be.an('array');
-						expect(parser.parse('[foo>=0]')).to.be.an('array');
-						expect(parser.parse('[foo   =   "Bar"   ]')).to.be.an('array');
-						expect(parser.parse('[foo   =   Bar   ]')).to.be.an('array');
-						expect(parser.parse('[foo   =   B\\ar   ]')).to.be.an('array');
-						expect(parser.parse('[foo   =   B:ar   ]')).to.be.an('array');
+						expect(parser.parse('[foo]')).to.be.an('object');
+						expect(parser.parse('[	foo   ]')).to.be.an('object');
+						expect(parser.parse('[foo="Bar"]')).to.be.an('object');
+						expect(parser.parse('[foo=\'Bar\']')).to.be.an('object');
+						expect(parser.parse('[foo^="Bar"]')).to.be.an('object');
+						expect(parser.parse('[foo$="Bar"]')).to.be.an('object');
+						expect(parser.parse('[foo*="Bar"]')).to.be.an('object');
+						expect(parser.parse('[_hideInIndex!=0]')).to.be.an('object');
+						expect(parser.parse('[foo<0]')).to.be.an('object');
+						expect(parser.parse('[foo<=0]')).to.be.an('object');
+						expect(parser.parse('[foo>0]')).to.be.an('object');
+						expect(parser.parse('[foo>=0]')).to.be.an('object');
+						expect(parser.parse('[foo   =   "Bar"   ]')).to.be.an('object');
+						expect(parser.parse('[foo   =   Bar   ]')).to.be.an('object');
+						expect(parser.parse('[foo   =   B\\ar   ]')).to.be.an('object');
+						expect(parser.parse('[foo   =   B:ar   ]')).to.be.an('object');
 				});
 
 				it('should not match invalid attribute filters', () => {
@@ -153,9 +150,9 @@ describe('Fizzle Parser', () => {
 				});
 
 				it('should match instanceof statements', () => {
-						expect(parser.parse('[instanceof "asdf"]')).to.be.an('array');
-						expect(parser.parse('[instanceof asdf]')).to.be.an('array');
-						expect(parser.parse('[foo instanceof string]')).to.be.an('array');
+						expect(parser.parse('[instanceof "asdf"]')).to.be.an('object');
+						expect(parser.parse('[instanceof asdf]')).to.be.an('object');
+						expect(parser.parse('[foo instanceof string]')).to.be.an('object');
 				});
 		});
 
@@ -164,25 +161,25 @@ describe('Fizzle Parser', () => {
 						const trueAst = parser.parse('[foo=true]');
 						const falseAst = parser.parse('[foo=false]');
 
-						expect(trueAst[0].attribute[0].right.operand).to.be.a('boolean');
-						expect(trueAst[0].attribute[0].right.operand).to.equal(true);
+						expect(trueAst.filters[0].attributeFilters[0].operand).to.be.a('boolean');
+						expect(trueAst.filters[0].attributeFilters[0].operand).to.equal(true);
 
-						expect(falseAst[0].attribute[0].right.operand).to.be.a('boolean');
-						expect(falseAst[0].attribute[0].right.operand).to.equal(false);
+						expect(falseAst.filters[0].attributeFilters[0].operand).to.be.a('boolean');
+						expect(falseAst.filters[0].attributeFilters[0].operand).to.equal(false);
 				});
 
 				it('should convert integer operands to number values', () => {
 						const ast = parser.parse('[foo=123]');
 
-						expect(ast[0].attribute[0].right.operand).to.be.a('number');
-						expect(ast[0].attribute[0].right.operand).to.equal(123);
+						expect(ast.filters[0].attributeFilters[0].operand).to.be.a('number');
+						expect(ast.filters[0].attributeFilters[0].operand).to.equal(123);
 				});
 
 				it('should convert float operands to number values', () => {
 						const ast = parser.parse('[foo=42.23]');
 
-						expect(ast[0].attribute[0].right.operand).to.be.a('number');
-						expect(ast[0].attribute[0].right.operand).to.equal(42.23);
+						expect(ast.filters[0].attributeFilters[0].operand).to.be.a('number');
+						expect(ast.filters[0].attributeFilters[0].operand).to.equal(42.23);
 				});
 		});
 });

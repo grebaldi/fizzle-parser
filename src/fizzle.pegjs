@@ -1,25 +1,22 @@
 FilterGroup
- 	= first:Filter following:( S ',' S filter:Filter { return filter } )* { following.unshift(first); return following; }
+ 	= first:Filter following:( S ',' S filter:Filter { return filter } )* { following.unshift(first); return {filters: following}; }
 
 Filter
  	= address:( PathFilter / IdentifierFilter / PropertyNameFilter )?  attribute:( AttributeFilters:AttributeFilter )* {
-		return {
-				address: address,
-				attribute: attribute
-		}
+		return Object.assign({}, address, {attributeFilters: attribute})
 }
 
 IdentifierFilter
  	= '#' id:ObjectIdentifier { return {id: id} }
 
 PropertyNameFilter
- 	= property:Identifier { return {property: property} }
+ 	= property:Identifier { return {propertyNameFilter: property} }
 
 PathFilter
  	= path:(( '/' ( Identifier ( '/' Identifier )* )? ) / ( head:(Identifier '/' Identifier) tail:( '/' Identifier )* {
         return [head.join(''), tail.reduce(function(prev, next) { return prev + next.join(''); }, '')] }
     )) {
-    return {path: path.join('')}
+    return {pathFilter: path.join('')}
 }
 
 AttributeFilter
@@ -30,7 +27,7 @@ AttributeFilter
               right:(
                   operator:( 'instanceof' / PrefixMatch / SuffixMatch / SubstringMatch / ExactMatch / NotEqualMatch / LessThanOrEqualMatch / LessThanMatch / GreaterThanOrEqualMatch / GreaterThanMatch )
                   S operand:( StringLiteral / NumberLiteral / BooleanLiteral / UnquotedOperand ) S { return {operator: operator, operand: operand} }
-              )? { return {left: left, right: right} }
+              )? { return Object.assign({}, { identifier: left }, right) }
           )
        )
   S ']' { return expr; }

@@ -39,23 +39,20 @@ module.exports = (function() {
         peg$c0 = ",",
         peg$c1 = { type: "literal", value: ",", description: "\",\"" },
         peg$c2 = function(first, filter) { return filter },
-        peg$c3 = function(first, following) { following.unshift(first); return following; },
+        peg$c3 = function(first, following) { following.unshift(first); return {filters: following}; },
         peg$c4 = function(address, attribute) {
-        		return {
-        				address: address,
-        				attribute: attribute
-        		}
+        		return Object.assign({}, address, {attributeFilters: attribute})
         },
         peg$c5 = "#",
         peg$c6 = { type: "literal", value: "#", description: "\"#\"" },
         peg$c7 = function(id) { return {id: id} },
-        peg$c8 = function(property) { return {property: property} },
+        peg$c8 = function(property) { return {propertyNameFilter: property} },
         peg$c9 = "/",
         peg$c10 = { type: "literal", value: "/", description: "\"/\"" },
         peg$c11 = function(head, tail) {
                 return [head.join(''), tail.reduce(function(prev, next) { return prev + next.join(''); }, '')] },
         peg$c12 = function(path) {
-            return {path: path.join('')}
+            return {pathFilter: path.join('')}
         },
         peg$c13 = "[",
         peg$c14 = { type: "literal", value: "[", description: "\"[\"" },
@@ -63,7 +60,7 @@ module.exports = (function() {
         peg$c16 = { type: "literal", value: "instanceof", description: "\"instanceof\"" },
         peg$c17 = function(operator, operand) { return {operator: operator, operand: operand} },
         peg$c18 = function(left, operator, operand) { return {operator: operator, operand: operand} },
-        peg$c19 = function(left, right) { return {left: left, right: right} },
+        peg$c19 = function(left, right) { return Object.assign({}, { identifier: left }, right) },
         peg$c20 = "]",
         peg$c21 = { type: "literal", value: "]", description: "\"]\"" },
         peg$c22 = function(expr) { return expr; },
