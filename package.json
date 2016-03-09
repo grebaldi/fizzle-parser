@@ -4,11 +4,12 @@
   "main": "dist/index.js",
   "scripts": {
     "prepublish": "npm run build",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "pretest": "npm run build:parser && rollup -c rollup.config.test.js",
-    "build:parser": "pegjs src/fizzle.pegjs src/fizzle.js",
-    "build": "npm run build:parser && rollup -c rollup.config.build.js",
     "test": "mocha test/bundle.js",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "prebuild": "npm run build:parser",
+    "build": "rollup -c rollup.config.build.js",
+    "build:parser": "pegjs src/fizzle.pegjs src/fizzle.js"
   },
   "keywords": [],
   "author": "Wilhelm Behncke <wilhelm.behncke@googlemail.com>",
